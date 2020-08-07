@@ -18,10 +18,12 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import src.main.java.org.crown.domain.enumeration.ResourceTypeEnum;
 
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.cert.TrustAnchor;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,8 +60,17 @@ public class ResourceTypeResource {
     @PostMapping("/resource-types")
     public ResponseEntity<ResourceType> createResourceType(@Valid @RequestBody ResourceType resourceType) throws URISyntaxException {
         log.debug("REST request to save ResourceType : {}", resourceType);
+        Boolean validName = false;
         if (resourceType.getId() != null) {
             throw new BadRequestAlertException("A new resourceType cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        while (ResourceTypeEnum.hasMoreElements()) {
+            if (ResourceTypeEnum.nextElement().equals(resourceType.getName())) {
+                validName = true;
+            }
+        }
+        if (validName == false) {
+            throw new BadRequestAlertException("This is not a valid resource type", ENTITY_NAME, "invalidresource");
         }
         ResourceType result = resourceTypeRepository.save(resourceType);
         return ResponseEntity.created(new URI("/api/resource-types/" + result.getId()))
