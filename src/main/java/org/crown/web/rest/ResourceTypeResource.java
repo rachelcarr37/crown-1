@@ -60,17 +60,11 @@ public class ResourceTypeResource {
     @PostMapping("/resource-types")
     public ResponseEntity<ResourceType> createResourceType(@Valid @RequestBody ResourceType resourceType) throws URISyntaxException {
         log.debug("REST request to save ResourceType : {}", resourceType);
-        Boolean validName = false;
         if (resourceType.getId() != null) {
             throw new BadRequestAlertException("A new resourceType cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        while (ResourceTypeEnum.hasMoreElements()) {
-            if (ResourceTypeEnum.nextElement().equals(resourceType.getName())) {
-                validName = true;
-            }
-        }
-        if (validName == false) {
-            throw new BadRequestAlertException("This is not a valid resource type", ENTITY_NAME, "invalidresource");
+        if (!ResourceTypeEnum.checkValidity(resourceType.getName())) {
+            throw new BadRequestAlertException("This is not a valid resourceType", ENTITY_NAME, "invalidtype");
         }
         ResourceType result = resourceTypeRepository.save(resourceType);
         return ResponseEntity.created(new URI("/api/resource-types/" + result.getId()))
