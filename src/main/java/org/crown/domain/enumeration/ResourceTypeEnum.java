@@ -8,21 +8,21 @@ import java.util.HashSet;
 public enum ResourceTypeEnum {
     N95FACEMASK, HOMEMADEFACEMASK, FACESHIELDS, GOWNS, BOOTCOVERS, GOGGLES, SWABS, VENTILATORS, GLOVES, SURGICALFACEMASK;
 
-    private static final Map<String, Element> BY_TYPE = new HashMap<>();
+    private static final Map<String, Element> RESOURCE_TYPES = new HashSet<>();
 
-    public final String typename;
+    public final String typeName;
 
-    private Element(String typename) {
-        this.typename = typename;
+    private Element(String typeName) {
+        this.typeName = typeName;
     }
 
     static {
         for (Element e: values()) {
-            BY_TYPE.put(e.typename, e);
+            RESOURCE_TYPES.put(e.typename, e);
         }
     }
 
     public static Boolean checkValidity(String typename) {
-        return BY_TYPE.contains(typename);
+        return RESOURCE_TYPES.contains(typename);
     }
 }

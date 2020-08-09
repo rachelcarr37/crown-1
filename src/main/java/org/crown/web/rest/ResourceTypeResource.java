@@ -62,8 +62,7 @@ public class ResourceTypeResource {
         log.debug("REST request to save ResourceType : {}", resourceType);
         if (resourceType.getId() != null) {
             throw new BadRequestAlertException("A new resourceType cannot already have an ID", ENTITY_NAME, "idexists");
-        }
-        if (!ResourceTypeEnum.checkValidity(resourceType.getName())) {
+        } else if (!ResourceTypeEnum.checkValidity(resourceType.getName())) {
             throw new BadRequestAlertException("This is not a valid resourceType", ENTITY_NAME, "invalidtype");
         }
         ResourceType result = resourceTypeRepository.save(resourceType);
